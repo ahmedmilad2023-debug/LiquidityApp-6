@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 15m Signal - 50x</title>
+<style>
+body{background:#0d1117;color:#e6edf3;font-family:tahoma;padding:10px;margin:0}
+h2{text-align:center;color:#58a6ff}
+.coin{background:#161b22;border:1px solid #30363d;margin:10px 0;padding:12px;border-radius:10px}
+.signal-buy{border-right:4px solid #3fb950}.signal-sell{border-right:4px solid #f85149}
+.top{display:flex;justify-content:space-between;align-items:center}
+.price{font-size:18px;font-weight:bold}
+.time{font-size:11px;color:#8b949e}
+.reason{font-size:13px;color:#8b949e;margin-top:8px}
+.tp-sl{display:flex;gap:15px;margin-top:6px;font-size:14px}
+.wait{text-align:center;padding:40px;color:#8b949e}
+</style>
+</head>
+<body>
+<h2>إشارات 15 دقيقة - رافعة 50x</h2>
+<div id="coins"><div class="wait">جاري جلب البيانات من بينانس...</div></div>
+<script>
+const symbols=["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","DOGEUSDT","TONUSDT","ADAUSDT","AVAXUSDT","TRXUSDT"];
+const API="https://api.binance.com/api/v3";
+
+async function getData(symbol){
+try{
+let [k,t]=await Promise.all([
+fetch(`${API}/klines?symbol=${symbol}&interval=15m&limit=100`),
+fetch(`${API}/ticker/24hr?symbol=${symbol}`)
+]);
+let klines=await k.json();
+let ticker=await t.json();
+let close=klines.map(k=>parseFloat(k[4]));
+let volume=klines.map(k=>parseFloat(k[5]));
+return {close,volume,price:parseFloat(ticker.lastPrice),quoteVol:parseFloat(ticker.quoteVolume)};
+}catch(e){return null}
+}
+
+function analyze(d){
+if(!d) return null;
+let last=d.close.at(-1); let prev=d.close.at(-2);
+let avgVol=d.volume.slice(-20).reduce((a,b)=>a+b)/20;
+let volNow=d.volume.at(-1);
+let liquid=volNow>avgVol*1.5; // شرط السيولة
+let change=(last-prev)/prev*100;
+let trendUp=last>d.close.at(-20); // فوق EMA20
+let trendDown=last<d.close.at(-20);
+
+let votes=0; let reason="";
+if(liquid && trendUp && change>0.3){votes=3; reason="سيولة عالية + ترند صاعد + زخم إيجابي";}
+if(liquid && trendDown && change<-0.3){votes=-3; reason="سيولة عالية + ترند هابط + زخم سلبي";}
+
+if(votes>=3){
+let sl=last*0.985; let tp=last*1.03; // RR = 2:1
+if((tp-last)>(last-sl)*1.5) return {type:"BUY",price:last,tp,sl,reason};
+}
+if(votes<=-3){
+let sl=last*1.015; let tp=last*0.97; // RR = 2:1
+if((last-tp)>(sl-last)*1.5) return {type:"SELL",price:last,tp,sl,reason};
+}
+return null;
+}
+
+async function run(){
+let html="";
+for(let s of symbols){
+let d=await getData(s);
+let sig=analyze(d);
+if(sig){
+html+=`<div class="coin signal-${sig.type.toLowerCase()}">
+<div class="top"><h3>${s}</h3><div class="price">${sig.type}</div></div>
+<div>السعر الحالي: ${sig.price.toFixed(4)}</div>
+<div class="tp-sl"><span>الهدف TP: ${sig.tp.toFixed(4)}</span><span>الوقف SL: ${sig.sl.toFixed(4)}</span></div>
+<div class="time">التوقيت: ${new Date().toLocaleString('ar-LY')}</div>
+<div class="reason">السبب: ${sig.reason}</div>
+</div>`;
+}
+document.getElementById("coins").innerHTML=html||"<div class='wait'>لا توجد إشارات حاليا. ننتظر سيولة وترند واضح</div>";
+}
+run();
+setInterval(run,60000); // تحديث كل دقيقة
+</script>
+</body>
+</html>
