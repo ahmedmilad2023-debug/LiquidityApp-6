@@ -2,85 +2,1127 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 15m Signal - 50x</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0e17">
+<title>Smart Money Flow Signals</title>
+<meta name="description" content="Smart Money Flow Cloud + ADX Signal Engine">
+<link id="manifestLink" rel="manifest">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230a0e17%22/><path d=%22M20 65 L40 45 L55 58 L80 30%22 stroke=%22%2300C8FF%22 stroke-width=%228%22 fill=%22none%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/></svg>">
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <style>
-body{background:#0d1117;color:#e6edf3;font-family:tahoma;padding:10px;margin:0}
-h2{text-align:center;color:#58a6ff}
-.coin{background:#161b22;border:1px solid #30363d;margin:10px 0;padding:12px;border-radius:10px}
-.signal-buy{border-right:4px solid #3fb950}.signal-sell{border-right:4px solid #f85149}
-.top{display:flex;justify-content:space-between;align-items:center}
-.price{font-size:18px;font-weight:bold}
-.time{font-size:11px;color:#8b949e}
-.reason{font-size:13px;color:#8b949e;margin-top:8px}
-.tp-sl{display:flex;gap:15px;margin-top:6px;font-size:14px}
-.wait{text-align:center;padding:40px;color:#8b949e}
+:root{
+--bg:#0a0e17;
+--bg2:#0f1420;
+--panel:#131926;
+--panel2:#1a2233;
+--border:#232c3d;
+--txt:#e7ecf5;
+--txt2:#8792a6;
+--bull:#00c8ff;
+--bear:#ff005d;
+--gold:#ffb020;
+--green:#00e39a;
+--radius:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;overscroll-behavior-y:none;}
+body{padding-bottom:78px;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:#2a3448;border-radius:4px;}
+
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:linear-gradient(180deg,rgba(10,14,23,.98),rgba(10,14,23,.9));backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--bull),#0066ff);display:flex;align-items:center;justify-content:center;font-weight:800;color:#00121c;font-size:16px;}
+.brand-txt{display:flex;flex-direction:column;line-height:1.1;}
+.brand-txt b{font-size:15px;letter-spacing:.2px;}
+.brand-txt span{font-size:11px;color:var(--txt2);}
+.status-pill{display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--border);padding:6px 10px;border-radius:20px;font-size:11px;color:var(--txt2);}
+.dot{width:7px;height:7px;border-radius:50%;background:#555;transition:.3s;}
+.dot.live{background:var(--green);box-shadow:0 0 8px var(--green);}
+.dot.err{background:var(--bear);box-shadow:0 0 8px var(--bear);}
+
+.container{padding:14px;max-width:640px;margin:0 auto;}
+.tab-view{display:none;animation:fadeIn .25s ease;}
+.tab-view.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:18px 2px 10px;}
+.section-title h3{margin:0;font-size:14px;color:var(--txt2);font-weight:600;letter-spacing:.3px;}
+.section-title .meta{font-size:11px;color:var(--txt2);}
+
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;}
+.stat-card .val{font-size:18px;font-weight:800;}
+.stat-card .lbl{font-size:10.5px;color:var(--txt2);margin-top:3px;}
+.stat-card .val.bull{color:var(--bull);}
+.stat-card .val.bear{color:var(--bear);}
+.stat-card .val.gold{color:var(--gold);}
+
+.watch-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;transition:.2s;}
+.watch-card:active{transform:scale(.985);}
+.watch-left{display:flex;align-items:center;gap:11px;}
+.sym-badge{width:38px;height:38px;border-radius:10px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--txt2);}
+.watch-info b{font-size:14.5px;}
+.watch-info .price{font-size:12px;color:var(--txt2);margin-top:2px;}
+.watch-right{text-align:left;}
+.score-ring{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;position:relative;}
+.dir-tag{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:700;margin-bottom:4px;display:inline-block;}
+.dir-tag.buy{background:rgba(0,200,255,.15);color:var(--bull);}
+.dir-tag.sell{background:rgba(255,0,93,.15);color:var(--bear);}
+.dir-tag.wait{background:rgba(135,146,166,.15);color:var(--txt2);}
+.chg{font-size:11.5px;}
+.chg.up{color:var(--green);}
+.chg.down{color:var(--bear);}
+
+.signal-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;position:relative;overflow:hidden;}
+.signal-card.buy{border-color:rgba(0,200,255,.35);}
+.signal-card.sell{border-color:rgba(255,0,93,.35);}
+.signal-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.signal-sym{font-size:16px;font-weight:800;}
+.signal-time{font-size:10.5px;color:var(--txt2);}
+.signal-badge{padding:5px 11px;border-radius:8px;font-weight:800;font-size:12px;}
+.signal-badge.buy{background:var(--bull);color:#00121c;}
+.signal-badge.sell{background:var(--bear);color:#fff;}
+.signal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;}
+.signal-grid div{background:var(--bg2);border-radius:9px;padding:8px 6px;text-align:center;}
+.signal-grid .g-lbl{font-size:9.5px;color:var(--txt2);margin-bottom:3px;}
+.signal-grid .g-val{font-size:12.5px;font-weight:700;}
+.score-bar-wrap{margin-top:10px;background:var(--bg2);border-radius:8px;height:7px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:8px;transition:width .4s;}
+.status-chip{position:absolute;top:12px;left:14px;font-size:10px;padding:3px 8px;border-radius:20px;background:rgba(0,227,154,.15);color:var(--green);font-weight:700;}
+.status-chip.closed{background:rgba(135,146,166,.15);color:var(--txt2);}
+
+.chart-wrap{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+.chart-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border);}
+.sym-select{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 2px;}
+.sym-chip{flex:0 0 auto;padding:8px 14px;border-radius:20px;background:var(--panel2);border:1px solid var(--border);color:var(--txt2);font-size:12.5px;font-weight:700;}
+.sym-chip.active{background:var(--bull);color:#00121c;border-color:var(--bull);}
+.tf-select{display:flex;gap:6px;}
+.tf-chip{padding:5px 10px;border-radius:7px;background:var(--panel2);border:1px solid var(--border);color:var(--txt2);font-size:11.5px;font-weight:700;}
+.tf-chip.active{background:var(--panel2);color:var(--bull);border-color:var(--bull);}
+#chartBox{width:100%;height:340px;}
+.chart-legend{display:flex;gap:14px;padding:8px 12px;font-size:11px;color:var(--txt2);border-top:1px solid var(--border);flex-wrap:wrap;}
+.chart-legend b{color:var(--txt);}
+
+.hist-row{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:8px;}
+.hist-l{display:flex;flex-direction:column;}
+.hist-l b{font-size:13.5px;}
+.hist-l span{font-size:10.5px;color:var(--txt2);margin-top:2px;}
+.hist-r{text-align:left;font-weight:800;font-size:13.5px;}
+.hist-r.win{color:var(--green);}
+.hist-r.loss{color:var(--bear);}
+.hist-r.open{color:var(--gold);}
+
+.settings-group{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;}
+.settings-group h4{margin:0 0 12px;font-size:13px;color:var(--txt2);}
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+.field label{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:7px;color:var(--txt);}
+.field label .fv{color:var(--bull);font-weight:700;}
+.field input[type=range]{width:100%;accent-color:var(--bull);}
+.field input[type=text],.field input[type=number],.field select{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:10px 11px;color:var(--txt);font-size:13px;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-row span{font-size:13px;}
+.switch{position:relative;width:44px;height:25px;flex:0 0 auto;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;inset:0;background:#2a3448;border-radius:20px;transition:.2s;cursor:pointer;}
+.slider:before{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+input:checked + .slider{background:var(--bull);}
+input:checked + .slider:before{transform:translateX(19px);}
+.chip-multiselect{display:flex;flex-wrap:wrap;gap:7px;}
+.chip-opt{padding:7px 12px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);font-size:12px;color:var(--txt2);}
+.chip-opt.on{background:rgba(0,200,255,.14);color:var(--bull);border-color:var(--bull);}
+.btn{width:100%;padding:13px;border-radius:11px;border:none;font-weight:800;font-size:13.5px;background:var(--bull);color:#00121c;}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--txt);}
+.btn.danger{background:rgba(255,0,93,.12);color:var(--bear);border:1px solid rgba(255,0,93,.3);}
+
+.empty{text-align:center;padding:40px 20px;color:var(--txt2);}
+.empty .ic{font-size:34px;margin-bottom:8px;}
+.empty p{font-size:12.5px;margin:4px 0 0;}
+
+.bottomnav{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(15,20,32,.97);backdrop-filter:blur(10px);border-top:1px solid var(--border);z-index:50;padding-bottom:env(safe-area-inset-bottom);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 8px;background:none;border:none;color:var(--txt2);font-size:10.5px;}
+.nav-btn .ic{font-size:19px;}
+.nav-btn.active{color:var(--bull);}
+.toast-wrap{position:fixed;top:70px;left:0;right:0;z-index:100;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
+.toast{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:11px 16px;font-size:12.5px;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:88%;animation:toastIn .3s ease;}
+.toast.buy{border-color:var(--bull);}
+.toast.sell{border-color:var(--bear);}
+@keyframes toastIn{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
-<h2>إشارات 15 دقيقة - رافعة 50x</h2>
-<div id="coins"><div class="wait">جاري جلب البيانات من بينانس...</div></div>
+
+<div class="topbar">
+<div class="brand">
+<div class="brand-logo">SM</div>
+<div class="brand-txt"><b>Smart Money Flow</b><span>ADX Signal Engine</span></div>
+</div>
+<div class="status-pill"><span class="dot" id="connDot"></span><span id="connTxt">Connecting</span></div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<div class="container">
+
+<div class="tab-view active" id="tab-dashboard">
+<div class="stat-grid">
+<div class="stat-card"><div class="val bull" id="statActive">0</div><div class="lbl">إشارات نشطة</div></div>
+<div class="stat-card"><div class="val gold" id="statWinrate">0%</div><div class="lbl">نسبة النجاح</div></div>
+<div class="stat-card"><div class="val" id="statTotal">0</div><div class="lbl">إجمالي الصفقات</div></div>
+</div>
+
+<div class="section-title"><h3>أقوى العملات لحظيًا</h3><span class="meta" id="scanMeta">—</span></div>
+<div id="watchlist"></div>
+
+<div class="section-title"><h3>آخر الإشارات</h3><span class="meta">Live</span></div>
+<div id="dashSignals"></div>
+</div>
+
+<div class="tab-view" id="tab-signals">
+<div class="section-title"><h3>لوحة الإشارات النشطة</h3><span class="meta" id="sigCount">0</span></div>
+<div id="signalsList"></div>
+</div>
+
+<div class="tab-view" id="tab-chart">
+<div class="sym-select" id="symSelect"></div>
+<div class="chart-wrap">
+<div class="chart-head">
+<b id="chartSymTitle" style="font-size:14px;">BTCUSDT</b>
+<div class="tf-select" id="tfSelect"></div>
+</div>
+<div id="chartBox"></div>
+<div class="chart-legend">
+<span>Basis: <b id="legBasis">—</b></span>
+<span>ADX: <b id="legAdx">—</b></span>
+<span>Flow: <b id="legFlow">—</b></span>
+<span>Score: <b id="legScore">—</b></span>
+</div>
+</div>
+</div>
+
+<div class="tab-view" id="tab-history">
+<div class="section-title"><h3>سجل الصفقات</h3><span class="meta" id="histMeta">—</span></div>
+<div id="historyList"></div>
+</div>
+
+<div class="tab-view" id="tab-settings">
+<div class="settings-group">
+<h4>فلاتر الإشارة</h4>
+<div class="field"><label>الحد الأدنى لقوة ADX <span class="fv" id="lblAdxMin">20</span></label><input type="range" id="rngAdxMin" min="10" max="40" value="20"></div>
+<div class="field"><label>الحد الأدنى لقوة الإشارة (Score) <span class="fv" id="lblScoreMin">60</span></label><input type="range" id="rngScoreMin" min="30" max="90" value="60"></div>
+<div class="field"><label>الفريم الزمني الافتراضي</label>
+<select id="selTf"><option value="5">5 دقائق</option><option value="15" selected>15 دقيقة</option><option value="30">30 دقيقة</option><option value="60">ساعة</option><option value="240">4 ساعات</option></select>
+</div>
+</div>
+
+<div class="settings-group">
+<h4>إدارة المخاطر</h4>
+<div class="field"><label>نسبة المخاطرة لكل صفقة <span class="fv" id="lblRisk">0.35%</span></label><input type="range" id="rngRisk" min="0.25" max="0.5" step="0.05" value="0.35"></div>
+<div class="field"><label>الرافعة المالية <span class="fv" id="lblLev">50x</span></label><input type="range" id="rngLev" min="5" max="100" step="5" value="50"></div>
+</div>
+
+<div class="settings-group">
+<h4>قائمة المراقبة (Watchlist)</h4>
+<div class="chip-multiselect" id="watchChips"></div>
+</div>
+
+<div class="settings-group">
+<h4>التنبيهات</h4>
+<div class="toggle-row"><span>تنبيه صوتي</span><label class="switch"><input type="checkbox" id="chkSound" checked><span class="slider"></span></label></div>
+<div class="toggle-row"><span>إشعارات المتصفح</span><label class="switch"><input type="checkbox" id="chkBrowserNotif"><span class="slider"></span></label></div>
+<div class="toggle-row"><span>تنبيه Telegram</span><label class="switch"><input type="checkbox" id="chkTelegram"><span class="slider"></span></label></div>
+<div id="telegramFields" style="display:none;margin-top:10px;">
+<div class="field"><label>Bot Token</label><input type="text" id="tgToken" placeholder="123456:ABC-..."></div>
+<div class="field"><label>Chat ID</label><input type="text" id="tgChat" placeholder="-100123456789"></div>
+</div>
+</div>
+
+<div class="settings-group">
+<h4>مصدر البيانات</h4>
+<div class="field"><label>Exchange</label><select id="selExchange"><option value="bybit" selected>Bybit Futures</option></select></div>
+</div>
+
+<button class="btn danger" id="btnResetHistory" style="margin-bottom:10px;">تصفير سجل الصفقات</button>
+<button class="btn ghost" id="btnTestAlert">اختبار التنبيه</button>
+</div>
+
+</div>
+
+<div class="bottomnav">
+<button class="nav-btn active" data-tab="dashboard"><span class="ic">📊</span>الرئيسية</button>
+<button class="nav-btn" data-tab="signals"><span class="ic">⚡</span>الإشارات</button>
+<button class="nav-btn" data-tab="chart"><span class="ic">📈</span>الشارت</button>
+<button class="nav-btn" data-tab="history"><span class="ic">🗂</span>السجل</button>
+<button class="nav-btn" data-tab="settings"><span class="ic">⚙️</span>الإعدادات</button>
+</div>
+
 <script>
-const symbols=["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","DOGEUSDT","TONUSDT","ADAUSDT","AVAXUSDT","TRXUSDT"];
-const API="https://api.binance.com/api/v3";
+"use strict";
 
-async function getData(symbol){
+/* ============================================================
+CONFIG
+============================================================ */
+const DEFAULT_WATCHLIST=["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","DOGEUSDT","ADAUSDT","LINKUSDT","AVAXUSDT","TONUSDT"];
+const CFG={
+adxMin:20,
+scoreMin:60,
+tf:"15",
+riskPct:0.35,
+leverage:50,
+watchlist:JSON.parse(JSON.stringify(DEFAULT_WATCHLIST)),
+exchange:"bybit",
+soundOn:true,
+browserNotif:false,
+telegramOn:true,
+tgToken:"8701817759:AAFNCDD0p4kh0JdSR1WfVRMFvulDVT7gDCQ",
+tgChat:"-1003970108966",
+len:34,basisType:"EMA",almaOffset:0.85,almaSigma:6.0,basisSmooth:3,
+mfLen:24,mfSmooth:5,mfPower:1.2,
+atrLen:14,minMult:0.9,maxMult:2.2,
+adxLen:14,
+dotCooldown:12
+};
+
+const TF_LIST=[{v:"5",l:"5m"},{v:"15",l:"15m"},{v:"30",l:"30m"},{v:"60",l:"1H"},{v:"240",l:"4H"}];
+
+/* ============================================================
+PERSISTENCE
+============================================================ */
+function loadCfg(){
 try{
-let [k,t]=await Promise.all([
-fetch(`${API}/klines?symbol=${symbol}&interval=15m&limit=100`),
-fetch(`${API}/ticker/24hr?symbol=${symbol}`)
-]);
-let klines=await k.json();
-let ticker=await t.json();
-let close=klines.map(k=>parseFloat(k[4]));
-let volume=klines.map(k=>parseFloat(k[5]));
-return {close,volume,price:parseFloat(ticker.lastPrice),quoteVol:parseFloat(ticker.quoteVolume)};
-}catch(e){return null}
+const saved=localStorage.getItem("smf_cfg");
+if(saved){const p=JSON.parse(saved);Object.assign(CFG,p);}
+}catch(e){}
+CFG.tgToken="8701817759:AAFNCDD0p4kh0JdSR1WfVRMFvulDVT7gDCQ";
+CFG.tgChat="-1003970108966";
+CFG.telegramOn=true;
+saveCfg();
+}
+function saveCfg(){
+try{localStorage.setItem("smf_cfg",JSON.stringify(CFG));}catch(e){}
+}
+function loadHistory(){
+try{const h=localStorage.getItem("smf_history");return h?JSON.parse(h):[];}catch(e){return [];}
+}
+function saveHistory(h){
+try{localStorage.setItem("smf_history",JSON.stringify(h.slice(0,300)));}catch(e){}
 }
 
-function analyze(d){
-if(!d) return null;
-let last=d.close.at(-1); let prev=d.close.at(-2);
-let avgVol=d.volume.slice(-20).reduce((a,b)=>a+b)/20;
-let volNow=d.volume.at(-1);
-let liquid=volNow>avgVol*1.5; // شرط السيولة
-let change=(last-prev)/prev*100;
-let trendUp=last>d.close.at(-20); // فوق EMA20
-let trendDown=last<d.close.at(-20);
+let TRADE_HISTORY=loadHistory();
+let OPEN_TRADES={};
 
-let votes=0; let reason="";
-if(liquid && trendUp && change>0.3){votes=3; reason="سيولة عالية + ترند صاعد + زخم إيجابي";}
-if(liquid && trendDown && change<-0.3){votes=-3; reason="سيولة عالية + ترند هابط + زخم سلبي";}
+/* ============================================================
+MATH HELPERS (mirrors the Pine Script engine)
+============================================================ */
+function ema(arr,length){
+const out=new Array(arr.length).fill(null);
+if(arr.length===0)return out;
+const k=2/(length+1);
+let prev=arr[0];
+out[0]=prev;
+for(let i=1;i<arr.length;i++){
+prev=arr[i]*k+prev*(1-k);
+out[i]=prev;
+}
+return out;
+}
+function rma(arr,length){
+const out=new Array(arr.length).fill(null);
+if(arr.length===0)return out;
+let sum=0,count=0,prev=null;
+for(let i=0;i<arr.length;i++){
+if(i<length){
+sum+=arr[i];count++;
+out[i]=sum/count;
+prev=out[i];
+}else{
+prev=(prev*(length-1)+arr[i])/length;
+out[i]=prev;
+}
+}
+return out;
+}
+function alma(arr,length,offset,sigma){
+const out=new Array(arr.length).fill(null);
+const m=Math.floor(offset*(length-1));
+const s=length/sigma;
+const weights=[];
+let wsum=0;
+for(let k=0;k<length;k++){
+const w=Math.exp(-((k-m)*(k-m))/(2*s*s));
+weights.push(w);wsum+=w;
+}
+for(let i=0;i<arr.length;i++){
+if(i<length-1){out[i]=arr[i];continue;}
+let acc=0;
+for(let k=0;k<length;k++){
+acc+=arr[i-length+1+k]*weights[k];
+}
+out[i]=acc/wsum;
+}
+return out;
+}
+function rollingSum(arr,length){
+const out=new Array(arr.length).fill(0);
+let sum=0;
+for(let i=0;i<arr.length;i++){
+sum+=arr[i];
+if(i>=length)sum-=arr[i-length];
+out[i]=sum;
+}
+return out;
+}
+function tanhF(x){
+const ex=Math.exp(x),emx=Math.exp(-x);
+return (ex-emx)/(ex+emx);
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 
-if(votes>=3){
-let sl=last*0.985; let tp=last*1.03; // RR = 2:1
-if((tp-last)>(last-sl)*1.5) return {type:"BUY",price:last,tp,sl,reason};
+/* ============================================================
+INDICATOR ENGINE : Smart Money Flow Cloud (ported from Pine)
+============================================================ */
+function computeSMF(candles){
+const n=candles.length;
+if(n<Math.max(CFG.len,CFG.mfLen,CFG.atrLen)+5){return null;}
+const open=candles.map(c=>c.open);
+const high=candles.map(c=>c.high);
+const low=candles.map(c=>c.low);
+const close=candles.map(c=>c.close);
+const volume=candles.map(c=>c.volume);
+
+const clv=new Array(n);
+const raw=new Array(n);
+for(let i=0;i<n;i++){
+clv[i]=(high[i]===low[i])?0:(((close[i]-low[i])-(high[i]-close[i]))/(high[i]-low[i]));
+raw[i]=clv[i]*volume[i];
 }
-if(votes<=-3){
-let sl=last*1.015; let tp=last*0.97; // RR = 2:1
-if((last-tp)>(sl-last)*1.5) return {type:"SELL",price:last,tp,sl,reason};
-}
-return null;
+const num=rollingSum(raw,CFG.mfLen);
+const denAbs=rollingSum(raw.map(v=>Math.abs(v)),CFG.mfLen);
+const mf=new Array(n);
+for(let i=0;i<n;i++){mf[i]=denAbs[i]===0?0:(num[i]/denAbs[i]);}
+const mfSm=CFG.mfSmooth>1?ema(mf,CFG.mfSmooth):mf;
+
+const strength=new Array(n);
+const mult=new Array(n);
+for(let i=0;i<n;i++){
+let s=Math.pow(Math.abs(mfSm[i]),CFG.mfPower);
+s=clamp(s,0,1);
+strength[i]=s;
+mult[i]=CFG.minMult+(CFG.maxMult-CFG.minMult)*s;
 }
 
-async function run(){
-let html="";
-for(let s of symbols){
-let d=await getData(s);
-let sig=analyze(d);
-if(sig){
-html+=`<div class="coin signal-${sig.type.toLowerCase()}">
-<div class="top"><h3>${s}</h3><div class="price">${sig.type}</div></div>
-<div>السعر الحالي: ${sig.price.toFixed(4)}</div>
-<div class="tp-sl"><span>الهدف TP: ${sig.tp.toFixed(4)}</span><span>الوقف SL: ${sig.sl.toFixed(4)}</span></div>
-<div class="time">التوقيت: ${new Date().toLocaleString('ar-LY')}</div>
-<div class="reason">السبب: ${sig.reason}</div>
+let bO,bC;
+if(CFG.basisType==="ALMA"){
+bO=alma(open,CFG.len,CFG.almaOffset,CFG.almaSigma);
+bC=alma(close,CFG.len,CFG.almaOffset,CFG.almaSigma);
+}else{
+bO=ema(open,CFG.len);
+bC=ema(close,CFG.len);
+}
+if(CFG.basisSmooth>1){bO=ema(bO,CFG.basisSmooth);bC=ema(bC,CFG.basisSmooth);}
+const bMain=bC;
+
+const tr=new Array(n);
+for(let i=0;i<n;i++){
+if(i===0){tr[i]=high[i]-low[i];continue;}
+tr[i]=Math.max(high[i]-low[i],Math.abs(high[i]-close[i-1]),Math.abs(low[i]-close[i-1]));
+}
+const atrArr=rma(tr,CFG.atrLen);
+
+const upper=new Array(n);
+const lower=new Array(n);
+for(let i=0;i<n;i++){
+upper[i]=bMain[i]+atrArr[i]*mult[i];
+lower[i]=bMain[i]-atrArr[i]*mult[i];
+}
+
+const lastSignal=new Array(n);
+const switchUp=new Array(n).fill(false);
+const switchDown=new Array(n).fill(false);
+for(let i=0;i<n;i++){
+const longCond=i>0 && close[i-1]<=upper[i-1] && close[i]>upper[i];
+const shortCond=i>0 && close[i-1]>=lower[i-1] && close[i]<lower[i];
+let prev=i===0?(close[i]>=bMain[i]?1:-1):lastSignal[i-1];
+lastSignal[i]=longCond?1:(shortCond?-1:prev);
+if(i>0){
+switchUp[i]=lastSignal[i]===1 && lastSignal[i-1]===-1;
+switchDown[i]=lastSignal[i]===-1 && lastSignal[i-1]===1;
+}
+}
+
+const mintick=close[n-1]*0.00001||0.00000001;
+const trendRaw=new Array(n);
+for(let i=0;i<n;i++){
+const upSpan=Math.max(upper[i]-bMain[i],mintick);
+const dnSpan=Math.max(bMain[i]-lower[i],mintick);
+const r=lastSignal[i]===1?((close[i]-bMain[i])/upSpan):(-(bMain[i]-close[i])/dnSpan);
+trendRaw[i]=tanhF(r*1.5);
+}
+const trendSigned=ema(trendRaw,3);
+
+return {open,high,low,close,volume,bO,bC,bMain,atr:atrArr,upper,lower,mfStrength:strength,mfSm,lastSignal,switchUp,switchDown,trendSigned};
+}
+
+/* ============================================================
+ADX (Wilder)
+============================================================ */
+function computeADX(candles,length){
+const n=candles.length;
+const high=candles.map(c=>c.high);
+const low=candles.map(c=>c.low);
+const close=candles.map(c=>c.close);
+const plusDM=new Array(n).fill(0);
+const minusDM=new Array(n).fill(0);
+const tr=new Array(n).fill(0);
+for(let i=1;i<n;i++){
+const up=high[i]-high[i-1];
+const down=low[i-1]-low[i];
+plusDM[i]=(up>down && up>0)?up:0;
+minusDM[i]=(down>up && down>0)?down:0;
+tr[i]=Math.max(high[i]-low[i],Math.abs(high[i]-close[i-1]),Math.abs(low[i]-close[i-1]));
+}
+const trR=rma(tr,length);
+const pdmR=rma(plusDM,length);
+const mdmR=rma(minusDM,length);
+const plusDI=new Array(n).fill(0);
+const minusDI=new Array(n).fill(0);
+const dx=new Array(n).fill(0);
+for(let i=0;i<n;i++){
+plusDI[i]=trR[i]?100*(pdmR[i]/trR[i]):0;
+minusDI[i]=trR[i]?100*(mdmR[i]/trR[i]):0;
+const s=plusDI[i]+minusDI[i];
+dx[i]=s?100*Math.abs(plusDI[i]-minusDI[i])/s:0;
+}
+const adx=rma(dx,length);
+return {plusDI,minusDI,adx};
+}
+
+/* ============================================================
+SIGNAL SCORING (0-100) -- ADX >= adxMin is a HARD gate
+============================================================ */
+function computeScore(smf,adxRes,i){
+const adxVal=adxRes.adx[i]||0;
+if(adxVal<CFG.adxMin)return {score:0,pass:false,adx:adxVal};
+
+const adxScore=clamp((adxVal-CFG.adxMin)/30,0,1)*30;
+const trendScore=clamp(Math.abs(smf.trendSigned[i]),0,1)*30;
+const flowScore=clamp(smf.mfStrength[i],0,1)*25;
+const freshCross=smf.switchUp[i]||smf.switchDown[i];
+const retestOk=(smf.lastSignal[i]===1 && smf.close[i]<smf.bC[i]) || (smf.lastSignal[i]===-1 && smf.close[i]>smf.bC[i]);
+const confirmScore=freshCross?15:(retestOk?8:0);
+const total=Math.round(clamp(adxScore+trendScore+flowScore+confirmScore,0,100));
+return {score:total,pass:total>=CFG.scoreMin,adx:adxVal,fresh:freshCross};
+}
+
+/* ============================================================
+EXCHANGE CONNECTOR : Bybit Futures (linear)
+============================================================ */
+const BYBIT_REST="https://api.bybit.com";
+async function fetchKlines(symbol,interval,limit){
+const url=`${BYBIT_REST}/v5/market/kline?category=linear&symbol=${symbol}&interval=${interval}&limit=${limit}`;
+const res=await fetch(url);
+const data=await res.json();
+if(!data||data.retCode!==0||!data.result||!data.result.list)throw new Error("bad kline response");
+const list=data.result.list.slice().reverse();
+return list.map(k=>({time:parseInt(k[0]),open:parseFloat(k[1]),high:parseFloat(k[2]),low:parseFloat(k[3]),close:parseFloat(k[4]),volume:parseFloat(k[5])}));
+}
+async function fetchTicker(symbol){
+const url=`${BYBIT_REST}/v5/market/tickers?category=linear&symbol=${symbol}`;
+const res=await fetch(url);
+const data=await res.json();
+if(!data||data.retCode!==0||!data.result||!data.result.list||!data.result.list[0])return null;
+const t=data.result.list[0];
+return {last:parseFloat(t.lastPrice),chg:parseFloat(t.price24hPcnt)*100};
+}
+
+let ws=null;
+let wsSymbol=null;
+function connectWS(symbol,interval){
+if(ws){try{ws.close();}catch(e){}ws=null;}
+wsSymbol=symbol;
+try{
+ws=new WebSocket("wss://stream.bybit.com/v5/public/linear");
+ws.onopen=()=>{
+setConn("live");
+ws.send(JSON.stringify({op:"subscribe",args:[`kline.${interval}.${symbol}`]}));
+};
+ws.onmessage=(ev)=>{
+try{
+const msg=JSON.parse(ev.data);
+if(msg.topic && msg.topic.startsWith("kline.") && msg.data && msg.data[0]){
+const k=msg.data[0];
+onLiveKline(symbol,{time:parseInt(k.start),open:parseFloat(k.open),high:parseFloat(k.high),low:parseFloat(k.low),close:parseFloat(k.close),volume:parseFloat(k.volume)},k.confirm);
+}
+}catch(e){}
+};
+ws.onerror=()=>{setConn("err");};
+ws.onclose=()=>{setConn("err");setTimeout(()=>{if(wsSymbol===symbol)connectWS(symbol,interval);},4000);};
+}catch(e){setConn("err");}
+}
+function setConn(state){
+const dot=document.getElementById("connDot");
+const txt=document.getElementById("connTxt");
+dot.className="dot"+(state==="live"?" live":state==="err"?" err":"");
+txt.textContent=state==="live"?"Bybit Live":state==="err"?"إعادة الاتصال...":"جاري الاتصال";
+}
+
+/* ============================================================
+STATE
+============================================================ */
+const SYMBOL_STATE={};
+let ACTIVE_CHART_SYMBOL="BTCUSDT";
+let chart=null,candleSeries=null,upperSeries=null,lowerSeries=null,basisSeries=null;
+
+function ensureState(sym){
+if(!SYMBOL_STATE[sym]){
+SYMBOL_STATE[sym]={candles:[],smf:null,adx:null,lastPrice:null,chg:0,lastScore:null,ready:false};
+}
+return SYMBOL_STATE[sym];
+}
+
+async function refreshSymbol(sym){
+const st=ensureState(sym);
+try{
+const candles=await fetchKlines(sym,CFG.tf,300);
+st.candles=candles;
+recompute(sym);
+const ticker=await fetchTicker(sym);
+if(ticker){st.lastPrice=ticker.last;st.chg=ticker.chg;}
+st.ready=true;
+}catch(e){
+st.ready=false;
+}
+}
+
+function recompute(sym){
+const st=SYMBOL_STATE[sym];
+if(!st||st.candles.length<40)return;
+const smf=computeSMF(st.candles);
+if(!smf)return;
+const adxRes=computeADX(st.candles,CFG.adxLen);
+st.smf=smf;st.adx=adxRes;
+const i=st.candles.length-1;
+const res=computeScore(smf,adxRes,i);
+st.lastScore=res;
+st.lastPrice=smf.close[i];
+evaluateSignal(sym,i);
+}
+
+function onLiveKline(sym,k,confirmed){
+const st=SYMBOL_STATE[sym];
+if(!st||!st.candles.length)return;
+const last=st.candles[st.candles.length-1];
+if(k.time===last.time){
+st.candles[st.candles.length-1]=k;
+}else if(k.time>last.time){
+st.candles.push(k);
+if(st.candles.length>320)st.candles.shift();
+}
+st.lastPrice=k.close;
+recompute(sym);
+if(sym===ACTIVE_CHART_SYMBOL)updateChartLive();
+updateTradeManager(sym);
+renderWatchlist();
+if(sym===ACTIVE_CHART_SYMBOL)updateLegend(sym);
+}
+
+/* ============================================================
+SIGNAL / TRADE LOGIC
+============================================================ */
+function evaluateSignal(sym,i){
+const st=SYMBOL_STATE[sym];
+const smf=st.smf,adxRes=st.adx;
+const res=computeScore(smf,adxRes,i);
+if(!res.pass)return;
+if(!res.fresh)return;
+const dir=smf.lastSignal[i]===1?"BUY":"SELL";
+if(OPEN_TRADES[sym])return;
+const entry=smf.close[i];
+const initialStop=dir==="BUY"?smf.lower[i]:smf.upper[i];
+// --- FIXED: Target calculated relative to Basis + spread (trend following) ---
+const spread = smf.upper[i] - smf.lower[i];
+const target = dir === "BUY" ? smf.bMain[i] + spread : smf.bMain[i] - spread;
+
+const trade={
+sym,dir,entry,stop:initialStop,target,
+riskPct:CFG.riskPct,leverage:CFG.leverage,
+openedAt:Date.now(),score:res.score,adx:res.adx,
+status:"open"
+};
+OPEN_TRADES[sym]=trade;
+notifySignal(trade);
+renderAll();
+}
+
+function updateTradeManager(sym){
+const trade=OPEN_TRADES[sym];
+if(!trade)return;
+const st=SYMBOL_STATE[sym];
+if(!st.smf)return;
+const i=st.candles.length-1;
+const smf=st.smf,adxRes=st.adx;
+const price=smf.close[i];
+const dirSig=smf.lastSignal[i];
+const adxNow=adxRes.adx[i]||0;
+
+// --- FIXED: Update Target to track the trend ---
+const spread = smf.upper[i] - smf.lower[i];
+trade.target = dirSig === 1 ? smf.bMain[i] + spread : smf.bMain[i] - spread;
+
+if(dirSig===1){trade.stop=Math.max(trade.stop,smf.lower[i]);}
+else{trade.stop=Math.min(trade.stop,smf.upper[i]);}
+
+let exitReason=null;
+if(trade.dir==="BUY" && dirSig===-1)exitReason="انعكاس الاتجاه (Trend Flip)";
+else if(trade.dir==="SELL" && dirSig===1)exitReason="انعكاس الاتجاه (Trend Flip)";
+else if(adxNow<CFG.adxMin)exitReason="ضعف ADX دون الحد الأدنى";
+else if(trade.dir==="BUY" && price<=trade.stop)exitReason="ضرب وقف الخسارة";
+else if(trade.dir==="SELL" && price>=trade.stop)exitReason="ضرب وقف الخسارة";
+
+if(exitReason){
+closeTrade(sym,price,exitReason);
+}
+}
+
+function closeTrade(sym,exitPrice,reason){
+const trade=OPEN_TRADES[sym];
+if(!trade)return;
+const pnlPct=trade.dir==="BUY"?((exitPrice-trade.entry)/trade.entry)*100:((trade.entry-exitPrice)/trade.entry)*100;
+const win=pnlPct>0;
+const record={
+sym:trade.sym,dir:trade.dir,entry:trade.entry,exit:exitPrice,
+pnlPct:pnlPct*trade.leverage/1,
+rawPnlPct:pnlPct,
+win,reason,score:trade.score,adx:trade.adx,
+openedAt:trade.openedAt,closedAt:Date.now()
+};
+TRADE_HISTORY.unshift(record);
+saveHistory(TRADE_HISTORY);
+delete OPEN_TRADES[sym];
+notifyClose(record);
+renderAll();
+}
+
+/* ============================================================
+NOTIFICATIONS
+============================================================ */
+function beep(freqStart,freqEnd){
+try{
+const ctx=new (window.AudioContext||window.webkitAudioContext)();
+const osc=ctx.createOscillator();
+const gain=ctx.createGain();
+osc.connect(gain);gain.connect(ctx.destination);
+osc.frequency.setValueAtTime(freqStart,ctx.currentTime);
+osc.frequency.linearRampToValueAtTime(freqEnd,ctx.currentTime+0.25);
+gain.gain.setValueAtTime(0.15,ctx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.35);
+osc.start();osc.stop(ctx.currentTime+0.35);
+}catch(e){}
+}
+function toast(msg,type){
+const wrap=document.getElementById("toastWrap");
+const el=document.createElement("div");
+el.className="toast "+(type||"");
+el.textContent=msg;
+wrap.appendChild(el);
+setTimeout(()=>{el.style.opacity="0";el.style.transition=".4s";setTimeout(()=>el.remove(),400);},3200);
+}
+function notifySignal(trade){
+const msg=`${trade.dir==="BUY"?"🟢 شراء":"🔴 بيع"} ${trade.sym} | دخول ${fmt(trade.entry)} | قوة ${trade.score}`;
+toast(msg,trade.dir==="BUY"?"buy":"sell");
+if(CFG.soundOn)beep(trade.dir==="BUY"?440:220,trade.dir==="BUY"?880:110);
+if(CFG.browserNotif && "Notification" in window && Notification.permission==="granted"){
+new Notification("إشارة "+ (trade.dir==="BUY"?"شراء":"بيع") +" "+trade.sym,{body:`دخول: ${fmt(trade.entry)} | وقف: ${fmt(trade.stop)} | هدف: ${fmt(trade.target)}`});
+}
+if(CFG.telegramOn && CFG.tgToken && CFG.tgChat){
+sendTelegram(`${trade.dir==="BUY"?"🟢 شراء":"🔴 بيع"} ${trade.sym}\nدخول: ${fmt(trade.entry)}\nوقف: ${fmt(trade.stop)}\nهدف: ${fmt(trade.target)}\nقوة الإشارة: ${trade.score}/100 | ADX: ${trade.adx.toFixed(1)}`);
+}
+}
+function notifyClose(record){
+const msg=`${record.win?"✅ ربح":"❌ خسارة"} ${record.sym} | ${record.rawPnlPct.toFixed(2)}% | ${record.reason}`;
+toast(msg,record.win?"buy":"sell");
+if(CFG.telegramOn && CFG.tgToken && CFG.tgChat){
+sendTelegram(`${record.win?"✅ إغلاق رابح":"❌ إغلاق خاسر"} ${record.sym}\nPnL: ${record.rawPnlPct.toFixed(2)}%\nالسبب: ${record.reason}`);
+}
+}
+async function sendTelegram(text){
+try{
+await fetch(`https://api.telegram.org/bot${CFG.tgToken}/sendMessage`,{
+method:"POST",headers:{"Content-Type":"application/json"},
+body:JSON.stringify({chat_id:CFG.tgChat,text})
+});
+}catch(e){}
+}
+
+/* ============================================================
+RENDERING
+============================================================ */
+function fmt(v){
+if(v==null||isNaN(v))return "—";
+if(v>=1000)return v.toFixed(2);
+if(v>=1)return v.toFixed(3);
+return v.toFixed(6);
+}
+function timeAgo(ts){
+const diff=Math.floor((Date.now()-ts)/1000);
+if(diff<60)return diff+"ث";
+if(diff<3600)return Math.floor(diff/60)+"د";
+if(diff<86400)return Math.floor(diff/3600)+"س";
+return Math.floor(diff/86400)+"ي";
+}
+
+function renderWatchlist(){
+const wrap=document.getElementById("watchlist");
+const rows=CFG.watchlist.map(sym=>{
+const st=SYMBOL_STATE[sym];
+if(!st||!st.ready)return {sym,score:-1};
+return {sym,score:st.lastScore?st.lastScore.score:0,st};
+}).sort((a,b)=>b.score-a.score).slice(0,8);
+
+wrap.innerHTML="";
+if(!rows.length || rows.every(r=>r.score<0)){
+wrap.innerHTML=`<div class="empty"><div class="ic">🛰️</div><p>جاري تحميل بيانات السوق...</p></div>`;
+return;
+}
+rows.forEach(r=>{
+if(!r.st)return;
+const st=r.st;
+const dir=st.smf?st.smf.lastSignal[st.candles.length-1]:0;
+const score=st.lastScore?st.lastScore.score:0;
+const dirClass=score>=CFG.scoreMin?(dir===1?"buy":"sell"):"wait";
+const dirLabel=score>=CFG.scoreMin?(dir===1?"شراء":"بيع"):"انتظار";
+const ringColor=dir===1?"var(--bull)":"var(--bear)";
+const chgClass=st.chg>=0?"up":"down";
+const el=document.createElement("div");
+el.className="watch-card";
+el.innerHTML=`
+<div class="watch-left">
+<div class="sym-badge">${r.sym.replace("USDT","")}</div>
+<div class="watch-info"><b>${r.sym}</b><div class="price">${fmt(st.lastPrice)} <span class="chg ${chgClass}">${st.chg>=0?"+":""}${(st.chg||0).toFixed(2)}%</span></div></div>
+</div>
+<div class="watch-right">
+<span class="dir-tag ${dirClass}">${dirLabel}</span>
+<div class="score-ring" style="background:conic-gradient(${ringColor} ${score*3.6}deg, #1a2233 0deg);"><span style="background:var(--panel);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;">${score}</span></div>
 </div>`;
+el.onclick=()=>{switchTab("chart");selectChartSymbol(r.sym);};
+wrap.appendChild(el);
+});
+document.getElementById("scanMeta").textContent=new Date().toLocaleTimeString("ar-EG");
 }
-document.getElementById("coins").innerHTML=html||"<div class='wait'>لا توجد إشارات حاليا. ننتظر سيولة وترند واضح</div>";
+
+function renderSignalCard(trade){
+const el=document.createElement("div");
+el.className="signal-card "+(trade.dir==="BUY"?"buy":"sell");
+el.innerHTML=`
+<span class="status-chip">مفتوحة</span>
+<div class="signal-top" style="margin-top:16px;">
+<div><div class="signal-sym">${trade.sym}</div><div class="signal-time">منذ ${timeAgo(trade.openedAt)}</div></div>
+<div class="signal-badge ${trade.dir==="BUY"?"buy":"sell"}">${trade.dir==="BUY"?"شراء LONG":"بيع SHORT"}</div>
+</div>
+<div class="signal-grid">
+<div><div class="g-lbl">الدخول</div><div class="g-val">${fmt(trade.entry)}</div></div>
+<div><div class="g-lbl">وقف الخسارة</div><div class="g-val" style="color:var(--bear)">${fmt(trade.stop)}</div></div>
+<div><div class="g-lbl">الهدف المتحرك</div><div class="g-val" style="color:var(--bull)">${fmt(trade.target)}</div></div>
+<div><div class="g-lbl">ADX</div><div class="g-val">${trade.adx.toFixed(1)}</div></div>
+</div>
+<div class="score-bar-wrap"><div class="score-bar-fill" style="width:${trade.score}%;background:${trade.dir==="BUY"?"var(--bull)":"var(--bear)"}"></div></div>
+`;
+return el;
 }
-run();
-setInterval(run,60000); // تحديث كل دقيقة
+
+function renderAll(){
+renderWatchlist();
+const activeList=Object.values(OPEN_TRADES);
+
+const dashWrap=document.getElementById("dashSignals");
+dashWrap.innerHTML="";
+if(!activeList.length){
+dashWrap.innerHTML=`<div class="empty"><div class="ic">📭</div><p>لا توجد إشارات نشطة حاليًا — الفلتر: ADX ≥ ${CFG.adxMin} وقوة ≥ ${CFG.scoreMin}</p></div>`;
+}else{
+activeList.slice(0,3).forEach(t=>dashWrap.appendChild(renderSignalCard(t)));
+}
+
+const sigWrap=document.getElementById("signalsList");
+sigWrap.innerHTML="";
+document.getElementById("sigCount").textContent=activeList.length;
+if(!activeList.length){
+sigWrap.innerHTML=`<div class="empty"><div class="ic">⚡</div><p>لا توجد إشارات نشطة الآن</p></div>`;
+}else{
+activeList.forEach(t=>sigWrap.appendChild(renderSignalCard(t)));
+}
+
+const histWrap=document.getElementById("historyList");
+histWrap.innerHTML="";
+if(!TRADE_HISTORY.length){
+histWrap.innerHTML=`<div class="empty"><div class="ic">🗂</div><p>لا يوجد سجل صفقات بعد</p></div>`;
+}else{
+TRADE_HISTORY.slice(0,60).forEach(r=>{
+const el=document.createElement("div");
+el.className="hist-row";
+el.innerHTML=`
+<div class="hist-l"><b>${r.sym} · ${r.dir==="BUY"?"شراء":"بيع"}</b><span>${new Date(r.closedAt).toLocaleString("ar-EG")} — ${r.reason}</span></div>
+<div class="hist-r ${r.win?"win":"loss"}">${r.rawPnlPct>=0?"+":""}${r.rawPnlPct.toFixed(2)}%</div>`;
+histWrap.appendChild(el);
+});
+}
+document.getElementById("histMeta").textContent=TRADE_HISTORY.length+" صفقة";
+
+const total=TRADE_HISTORY.length;
+const wins=TRADE_HISTORY.filter(r=>r.win).length;
+document.getElementById("statActive").textContent=activeList.length;
+document.getElementById("statTotal").textContent=total;
+document.getElementById("statWinrate").textContent=total?Math.round((wins/total)*100)+"%":"0%";
+}
+
+/* ============================================================
+CHART (Lightweight Charts)
+============================================================ */
+function initChart(){
+const box=document.getElementById("chartBox");
+chart=LightweightCharts.createChart(box,{
+layout:{background:{color:"#131926"},textColor:"#8792a6"},
+grid:{vertLines:{color:"#1c2434"},horzLines:{color:"#1c2434"}},
+rightPriceScale:{borderColor:"#232c3d"},
+timeScale:{borderColor:"#232c3d",timeVisible:true},
+crosshair:{mode:0},
+autoSize:true
+});
+candleSeries=chart.addCandlestickSeries({upColor:"#00c8ff",downColor:"#ff005d",borderVisible:false,wickUpColor:"#00c8ff",wickDownColor:"#ff005d"});
+basisSeries=chart.addLineSeries({color:"#ffb020",lineWidth:2});
+upperSeries=chart.addLineSeries({color:"rgba(255,255,255,0.3)",lineWidth:1});
+lowerSeries=chart.addLineSeries({color:"rgba(255,255,255,0.3)",lineWidth:1});
+}
+
+function renderChartData(sym){
+const st=SYMBOL_STATE[sym];
+if(!st || !st.smf)return;
+const smf=st.smf;
+const candleData=st.candles.map((c,i)=>({time:Math.floor(c.time/1000),open:c.open,high:c.high,low:c.low,close:c.close}));
+candleSeries.setData(candleData);
+basisSeries.setData(candleData.map((c,i)=>({time:c.time,value:smf.bMain[i]})));
+upperSeries.setData(candleData.map((c,i)=>({time:c.time,value:smf.upper[i]})));
+lowerSeries.setData(candleData.map((c,i)=>({time:c.time,value:smf.lower[i]})));
+updateLegend(sym);
+}
+function updateChartLive(){
+const st=SYMBOL_STATE[ACTIVE_CHART_SYMBOL];
+if(!st||!st.smf||!candleSeries)return;
+renderChartData(ACTIVE_CHART_SYMBOL);
+}
+function updateLegend(sym){
+const st=SYMBOL_STATE[sym];
+if(!st||!st.smf)return;
+const i=st.candles.length-1;
+document.getElementById("legBasis").textContent=fmt(st.smf.bMain[i]);
+document.getElementById("legAdx").textContent=(st.adx.adx[i]||0).toFixed(1);
+document.getElementById("legFlow").textContent=(st.smf.mfStrength[i]*100).toFixed(0)+"%";
+document.getElementById("legScore").textContent=st.lastScore?st.lastScore.score:"—";
+}
+
+async function selectChartSymbol(sym){
+ACTIVE_CHART_SYMBOL=sym;
+document.getElementById("chartSymTitle").textContent=sym;
+document.querySelectorAll(".sym-chip").forEach(c=>c.classList.toggle("active",c.dataset.sym===sym));
+if(!SYMBOL_STATE[sym] || !SYMBOL_STATE[sym].ready){
+await refreshSymbol(sym);
+}
+renderChartData(sym);
+connectWS(sym,CFG.tf);
+}
+
+/* ============================================================
+UI WIRING
+============================================================ */
+function switchTab(name){
+document.querySelectorAll(".tab-view").forEach(v=>v.classList.remove("active"));
+document.getElementById("tab-"+name).classList.add("active");
+document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
+}
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+btn.addEventListener("click",()=>switchTab(btn.dataset.tab));
+});
+
+function buildSymSelect(){
+const wrap=document.getElementById("symSelect");
+wrap.innerHTML="";
+CFG.watchlist.forEach(sym=>{
+const chip=document.createElement("div");
+chip.className="sym-chip"+(sym===ACTIVE_CHART_SYMBOL?" active":"");
+chip.textContent=sym.replace("USDT","");
+chip.dataset.sym=sym;
+chip.onclick=()=>selectChartSymbol(sym);
+wrap.appendChild(chip);
+});
+}
+function buildTfSelect(){
+const wrap=document.getElementById("tfSelect");
+wrap.innerHTML="";
+TF_LIST.forEach(tf=>{
+const chip=document.createElement("div");
+chip.className="tf-chip"+(tf.v===CFG.tf?" active":"");
+chip.textContent=tf.l;
+chip.onclick=async ()=>{
+CFG.tf=tf.v;saveCfg();
+document.querySelectorAll(".tf-chip").forEach(c=>c.classList.remove("active"));
+chip.classList.add("active");
+await refreshSymbol(ACTIVE_CHART_SYMBOL);
+renderChartData(ACTIVE_CHART_SYMBOL);
+connectWS(ACTIVE_CHART_SYMBOL,CFG.tf);
+};
+wrap.appendChild(chip);
+});
+}
+function buildWatchChips(){
+const wrap=document.getElementById("watchChips");
+wrap.innerHTML="";
+const ALL_SYMS=["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT","DOGEUSDT","ADAUSDT","LINKUSDT","AVAXUSDT","TONUSDT","DOTUSDT","LTCUSDT","MATICUSDT","NEARUSDT","ARBUSDT","OPUSDT"];
+ALL_SYMS.forEach(sym=>{
+const chip=document.createElement("div");
+chip.className="chip-opt"+(CFG.watchlist.includes(sym)?" on":"");
+chip.textContent=sym.replace("USDT","");
+chip.onclick=()=>{
+if(CFG.watchlist.includes(sym)){
+CFG.watchlist=CFG.watchlist.filter(s=>s!==sym);
+}else{
+if(CFG.watchlist.length>=12){toast("الحد الأقصى 12 عملة","sell");return;}
+CFG.watchlist.push(sym);
+ensureState(sym);
+refreshSymbol(sym);
+}
+saveCfg();
+buildWatchChips();
+buildSymSelect();
+};
+wrap.appendChild(chip);
+});
+}
+
+function wireSettings(){
+const rngAdx=document.getElementById("rngAdxMin");
+rngAdx.value=CFG.adxMin;
+document.getElementById("lblAdxMin").textContent=CFG.adxMin;
+rngAdx.oninput=()=>{CFG.adxMin=parseInt(rngAdx.value);document.getElementById("lblAdxMin").textContent=CFG.adxMin;saveCfg();};
+
+const rngScore=document.getElementById("rngScoreMin");
+rngScore.value=CFG.scoreMin;
+document.getElementById("lblScoreMin").textContent=CFG.scoreMin;
+rngScore.oninput=()=>{CFG.scoreMin=parseInt(rngScore.value);document.getElementById("lblScoreMin").textContent=CFG.scoreMin;saveCfg();};
+
+const rngRisk=document.getElementById("rngRisk");
+rngRisk.value=CFG.riskPct;
+document.getElementById("lblRisk").textContent=CFG.riskPct+"%";
+rngRisk.oninput=()=>{CFG.riskPct=parseFloat(rngRisk.value);document.getElementById("lblRisk").textContent=CFG.riskPct+"%";saveCfg();};
+
+const rngLev=document.getElementById("rngLev");
+rngLev.value=CFG.leverage;
+document.getElementById("lblLev").textContent=CFG.leverage+"x";
+rngLev.oninput=()=>{CFG.leverage=parseInt(rngLev.value);document.getElementById("lblLev").textContent=CFG.leverage+"x";saveCfg();};
+
+const selTf=document.getElementById("selTf");
+selTf.value=CFG.tf;
+selTf.onchange=()=>{CFG.tf=selTf.value;saveCfg();buildTfSelect();};
+
+document.getElementById("chkSound").checked=CFG.soundOn;
+document.getElementById("chkSound").onchange=(e)=>{CFG.soundOn=e.target.checked;saveCfg();};
+
+const chkNotif=document.getElementById("chkBrowserNotif");
+chkNotif.checked=CFG.browserNotif;
+chkNotif.onchange=async (e)=>{
+if(e.target.checked && "Notification" in window){
+const perm=await Notification.requestPermission();
+if(perm!=="granted"){e.target.checked=false;CFG.browserNotif=false;saveCfg();toast("تم رفض إذن الإشعارات","sell");return;}
+}
+CFG.browserNotif=e.target.checked;saveCfg();
+};
+
+const chkTg=document.getElementById("chkTelegram");
+chkTg.checked=CFG.telegramOn;
+document.getElementById("telegramFields").style.display=CFG.telegramOn?"block":"none";
+chkTg.onchange=(e)=>{CFG.telegramOn=e.target.checked;document.getElementById("telegramFields").style.display=CFG.telegramOn?"block":"none";saveCfg();};
+
+document.getElementById("tgToken").value=CFG.tgToken;
+document.getElementById("tgToken").onchange=(e)=>{CFG.tgToken=e.target.value.trim();saveCfg();};
+document.getElementById("tgChat").value=CFG.tgChat;
+document.getElementById("tgChat").onchange=(e)=>{CFG.tgChat=e.target.value.trim();saveCfg();};
+
+document.getElementById("btnResetHistory").onclick=()=>{
+if(confirm("سيتم حذف كل سجل الصفقات، متابعة؟")){
+TRADE_HISTORY=[];saveHistory(TRADE_HISTORY);renderAll();
+}
+};
+document.getElementById("btnTestAlert").onclick=()=>{
+toast("🔔 هذا اختبار للتنبيه","buy");
+if(CFG.soundOn)beep(440,880);
+};
+
+buildWatchChips();
+}
+
+/* ============================================================
+PWA : inline manifest + service worker (single-file friendly)
+============================================================ */
+function setupPWA(){
+const manifest={
+name:"Smart Money Flow Signals",
+short_name:"SMF Signals",
+start_url:".",
+display:"standalone",
+background_color:"#0a0e17",
+theme_color:"#0a0e17",
+icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0e17'/%3E%3Cpath d='M20 65 L40 45 L55 58 L80 30' stroke='%2300C8FF' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"}]
+};
+const blob=new Blob([JSON.stringify(manifest)],{type:"application/json"});
+document.getElementById("manifestLink").href=URL.createObjectURL(blob);
+
+if("serviceWorker" in navigator){
+const swCode=`
+self.addEventListener("install",e=>self.skipWaiting());
+self.addEventListener("activate",e=>self.clients.claim());
+self.addEventListener("fetch",e=>{});
+`;
+const swBlob=new Blob([swCode],{type:"application/javascript"});
+navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+}
+}
+
+/* ============================================================
+BOOT
+============================================================ */
+async function boot(){
+loadCfg();
+setupPWA();
+buildSymSelect();
+buildTfSelect();
+wireSettings();
+initChart();
+
+CFG.watchlist.forEach(sym=>ensureState(sym));
+renderAll();
+
+for(const sym of CFG.watchlist){
+await refreshSymbol(sym);
+renderWatchlist();
+}
+selectChartSymbol(CFG.watchlist[0]);
+renderAll();
+
+setInterval(async ()=>{
+for(const sym of CFG.watchlist){
+if(sym===ACTIVE_CHART_SYMBOL)continue;
+await refreshSymbol(sym);
+updateTradeManager(sym);
+}
+renderAll();
+},20000);
+
+setInterval(()=>{renderAll();},15000);
+}
+
+boot();
 </script>
 </body>
-</html>
+  </html>
